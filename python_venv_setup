@@ -1,0 +1,81 @@
+Pre-flight Check
+These instructions are being performed on an Ubuntu 18.04 LTS dedicated server as the root user.
+
+Python 3
+Step 1: Install Python3-venv
+First, as a best-practice, we ensure all packages are up to date:
+
+root@ubuntu:~# apt-get update -y
+Next, let's install python3-venv
+
+root@ubuntu:~# apt-get install -y python3-venv
+Step 2: Create a Virtual Python Environment
+Now that the venv module is installed, we can go ahead and create a virtual Python environment. Let’s start by making a project directory and changing into it. You can name it whatever you like:
+
+root@ubuntu:~# mkdir awesome_python_project
+root@ubuntu:~# cd awesome_python_project/
+root@ubuntu:~/awesome_python_project#
+Now it’s time to create the virtual Python environment for the project:
+
+root@ubuntu:~/awesome_python_project# python3 -m venv awesome_venv
+You’ll notice if you list your project directory, there is a new directory inside. This is where the Python binary and site-packages for your virtual Python environment are:
+
+root@ubuntu:~/awesome_python_project# ls -l
+total 4
+drwxr-xr-x 6 root root 4096 Oct 30 20:14 awesome_venv
+Step 3: Activate and Update the Virtual Python Environment
+Now that we have a virtual Python environment to work with, let’s activate it:
+
+root@ubuntu:~/awesome_python_project# source awesome_venv/bin/activate
+After activating the virtual Python environment, the name of the virtual environment, wrapped in parentheses, precedes the command prompt. This is an indication that right now, we’re working within the virtual environment we just created. Any Python packages we install will be isolated to this virtual environment:
+
+(awesome_venv) root@ubuntu:~/awesome_python_project#
+After the virtual environment is active, we are going to want to ensure that a couple of essential Python packages within the virtual environment are up to date:
+
+(awesome_venv) root@ubuntu:~/awesome_python_project# pip install -U setuptools pip
+Step 4: Try It Out
+Now that our virtual environment is set up and ready to go, let’s give it a try with a simple script. First, let’s install the termcolor package:
+
+(awesome_venv) root@ubuntu:~/awesome_python_project# pip install termcolor
+Collecting termcolor
+  Downloading https://files.pythonhosted.org/packages/8a/48/a76be51647d0eb9f10e2a4511bf3ffb8cc1e6b14e9e4fab46173aa79f981/termcolor-1.1.0.tar.gz
+Installing collected packages: termcolor
+    Running setup.py install for termcolor ... done
+Successfully installed termcolor-1.1.0
+Next, let’s create a simple Python script. First, run this command:
+
+(awesome_venv) root@ubuntu:~/awesome_python_project# cat << EOF > hello_colors.py
+>
+After that, paste in this Python snippet. Be sure to include the EOF at the end of the snippet and then hit enter:
+
+#!/usr/bin/env python
+
+import termcolor
+
+for color in termcolor.COLORS.keys():
+    print(termcolor.colored("Hello!", color))
+EOF
+Finally, run the script:
+
+(awesome_venv) root@ubuntu:~/awesome_python_project# python hello_colors.py
+You should see “Hello!” printed nine times in different colors.
+
+To wrap things up, let’s deactivate the virtual environment:
+
+(awesome_venv) root@ubuntu:~/awesome_python_project# deactivate
+root@ubuntu:~/awesome_python_project#
+The last thing we need to verify is that the package we installed in our virtual environment, termcolor, is truly isolated to that environment. Let’s open up a Python shell:
+
+
+root@ubuntu:~/awesome_python_project# python3
+Python 3.6.8 (default, Oct  7 2019, 12:59:55)
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 
+Now, try to import termcolor:
+
+>>> import termcolor
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ModuleNotFoundError: No module named 'termcolor'
+We are unable to import the termcolor module because we are no longer invoking the Python binary and site-packages that exist in the virtual environment we created. This indicates that the termcolor module isn’t installed on our system’s Python.
